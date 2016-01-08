@@ -1,8 +1,103 @@
 ---
-title: "DataAnalysisWithR"
+title: "White Wines: A Data Exploration Approach"
 author: "Lamont Girton"
 date: "November 2, 2015"
-output: html_document
+output: 
+  html_document: 
+    theme: journal
 ---
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+
+library(knitr)
+
+opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE, fig.align='center')
+
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+
+```
+
+```{r}
+
+wines <- read.csv("./wineQualityWhites.csv")
+
+```
+
+# Introduction
+
+This paper will explore the quality of various white wines through their chemical composition, with the purpose of visualizing the data and exploring various variable relationships with respect to _quality_.  The dataset for this paper is available [here](https://s3.amazonaws.com/udacity-hosted-downloads/ud651/wineQualityWhites.csv).  The provided dataset contains `r nrow(wines)` observations of `r ncol(wines)`.  The variable labeled _X_ is 100% unique and appears to be an instance identifier and sense it provides no explanatory benefit, will be excluded from the analysis in this paper.
+
+
+# Univariate Analysis
+
+
+
+## Dataset Structure
+Below is a listing of the _str_ command, which displays the structure of the data frame.  As noted earlier, there are `r ncol(wines)` variables and from the listing below, they all appear to be numeric.  Additionally, there are no missing values.
+
+```{r, echo=TRUE}
+
+str(wines)
+
+```
+
+```{r, results='asis'}
+summaries <- data.frame(cbind(
+    apply(wines, 2, min),
+    apply(wines, 2, mean),
+    apply(wines, 2, median),
+    apply(wines, 2, max),
+    apply(wines, 2, sd)
+))
+
+names(summaries) <- c("Min", "Mean", "Median", "Max", "SD")
+
+    
+```
+
+## Descriptive Statistics
+
+```{r}
+kable(summaries, digits = 3)
+
+```
+
+
+```{r}
+
+data.frame(cbind(scale(wines[2:12]),quality=wines$quality)) %>% 
+    gather(variable, value, -quality) %>% 
+    ggplot(aes(value, fill=factor(quality))) +
+    geom_histogram() +
+    facet_wrap(~variable, scales = "free")
+    
+
+```
+
+
+## Distributions
+
+```{r}
+
+select(wines, -X) %>% 
+    gather(variable) %>% 
+    ggplot(aes(value)) +
+    geom_density() +
+    facet_wrap(~variable,scales = "free")
+
+```
+
+# Bivariate Analysis
+
+# Multivariate Analysis
+
+# Final Plots and Summary
+
+# Reflection
+
+
+
 
 
